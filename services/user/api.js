@@ -2,7 +2,8 @@
 
 const status = require("http-status");
 const Model = require("./model");
-const {registerValidator} = require("../../utils/validator");
+const {registerValidator, loginValidator} = require("./validator");
+const bcrypt = require("bcryptjs");
 
 module.exports = async function(app, prefix) {
   const model = new Model();
@@ -25,6 +26,10 @@ module.exports = async function(app, prefix) {
     const {error} = registerValidator(req.body);
     if (error) return res.status(status.BAD_REQUEST).json(error.details);
     try {
+      const salt = await bcrypt.genSalt(10);
+      console.log(req.body.password);
+      req.body.password = await bcrypt.hash(req.body.password, salt);
+      console.log(req.body.password);
       const user = await model.register(req.body);
       console.log(user);
       res.status(status.OK).json(user);
