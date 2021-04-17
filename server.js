@@ -71,7 +71,7 @@ class Server {
       let pathApi = `${pathTabla}/api.js`;
       if (fs.lstatSync(pathTabla).isDirectory() && fs.existsSync(pathApi)) {
         let api = require(pathApi);
-        api(this.app, `/finance/${path}`);
+        api(this.app, `/api/${path}`);
       }
     }
 

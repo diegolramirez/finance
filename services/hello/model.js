@@ -1,6 +1,6 @@
 "use strict";
 
-const axios = require("axios");
+// const axios = require("axios");
 const DB = require("../../utils/db");
 
 class Model extends DB {
