@@ -31,19 +31,4 @@ module.exports = async function(app, prefix) {
     }
     return res;
   });
-
-  app.get(prefix + "/customer/:customerId", async (req, res) => {
-    try {
-      const customer = await model.customer(req.params.customerId);
-      console.log(customer);
-      console.log(!customer);
-      console.log(!!customer);
-      if (!!customer) res.status(status.NOT_FOUND).json("customer not found");
-      else res.status(status.OK).json(customer);
-    } catch (err) {
-      console.log(err);
-      res.status(status.INTERNAL_SERVER_ERROR).json(err.message);
-    }
-    return res;
-  });
 };

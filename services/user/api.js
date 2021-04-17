@@ -9,22 +9,22 @@ module.exports = async function(app, prefix) {
 
   /**
    * @swagger
-   * /finance/hello/text/:
-   *   get:
-   *     description: Returns hello message.
+   * /api/user/register:
+   *   post:
+   *     description: Register a user.
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Message returned.
+   *         description: User registered.
    *       500:
    *         description: API failed unexpectedly.
    */
-  app.get(prefix + "/text/:text?", (req, res) => {
+  app.post(prefix + "/register", async (req, res) => {
     try {
-      const text = model.helloWorld(req.params.text);
-      console.log(text);
-      res.status(status.OK).json(text);
+      const user = await model.register(req.body);
+      console.log(user);
+      res.status(status.OK).json(user);
     } catch (err) {
       console.log(err);
       res.status(status.INTERNAL_SERVER_ERROR).json(err.message);
@@ -32,14 +32,23 @@ module.exports = async function(app, prefix) {
     return res;
   });
 
-  app.get(prefix + "/customer/:customerId", async (req, res) => {
+  app.get(prefix + "/:id", async (req, res) => {
     try {
-      const customer = await model.customer(req.params.customerId);
-      console.log(customer);
-      console.log(!customer);
-      console.log(!!customer);
-      if (!!customer) res.status(status.NOT_FOUND).json("customer not found");
-      else res.status(status.OK).json(customer);
+      const user = await model.find({id: req.params.id});
+      if (!user) res.status(status.NOT_FOUND).json("user not found");
+      else res.status(status.OK).json(user);
+    } catch (err) {
+      console.log(err);
+      res.status(status.INTERNAL_SERVER_ERROR).json(err.message);
+    }
+    return res;
+  });
+
+  app.get(prefix + "by_email/:email", async (req, res) => {
+    try {
+      const user = await model.find({email: req.params.email});
+      if (!user) res.status(status.NOT_FOUND).json("user not found");
+      else res.status(status.OK).json(user);
     } catch (err) {
       console.log(err);
       res.status(status.INTERNAL_SERVER_ERROR).json(err.message);
