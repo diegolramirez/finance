@@ -12,11 +12,20 @@ class Server {
     const bodyParser = require("body-parser");
     const helmet = require("helmet");
     const morgan = require("morgan");
+    const rateLimit = require("express-rate-limit");
 
     // express y middlewares init
     this.app = express();
     this.app.use(helmet());
     this.app.use(morgan("combined"));
+    this.app.use(
+      rateLimit({
+        windowMs: 1 * 60 * 1000, // 1 minutes window
+        max: 10, // start blocking after 5 requests
+        message:
+          "Too many requests created from this IP, please try again later"
+      })
+    );
 
     // config bodyParser
     this.app.use(
