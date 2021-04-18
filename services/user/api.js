@@ -3,7 +3,7 @@
 const status = require("http-status");
 const Model = require("./model");
 const {registerValidator, loginValidator} = require("./validator");
-const bcrypt = require("bcryptjs");
+const checkToken = require("../../middlewares/checkToken");
 
 module.exports = async function(app, prefix) {
   const model = new Model();
@@ -26,10 +26,6 @@ module.exports = async function(app, prefix) {
     const {error} = registerValidator(req.body);
     if (error) return res.status(status.BAD_REQUEST).json(error.details);
     try {
-      const salt = await bcrypt.genSalt(10);
-      console.log(req.body.password);
-      req.body.password = await bcrypt.hash(req.body.password, salt);
-      console.log(req.body.password);
       const user = await model.register(req.body);
       console.log(user);
       res.status(status.OK).json(user);
@@ -40,7 +36,21 @@ module.exports = async function(app, prefix) {
     return res;
   });
 
-  app.get(prefix + "/:id", async (req, res) => {
+  app.post(prefix + "/login", async (req, res) => {
+    const {error} = loginValidator(req.body);
+    if (error) return res.status(status.BAD_REQUEST).json(error.details);
+    try {
+      const token = await model.login(req.body);
+      // console.log(user);
+      res.status(status.OK).json(token);
+    } catch (err) {
+      console.log(err);
+      res.status(status.INTERNAL_SERVER_ERROR).json(err.message);
+    }
+    return res;
+  });
+
+  app.get(prefix + "/by_id/:id", checkToken, async (req, res) => {
     try {
       const user = await model.find({id: req.params.id});
       if (!user) res.status(status.NOT_FOUND).json("user not found");
@@ -52,7 +62,7 @@ module.exports = async function(app, prefix) {
     return res;
   });
 
-  app.get(prefix + "by_email/:email", async (req, res) => {
+  app.get(prefix + "/by_email/:email", checkToken, async (req, res) => {
     try {
       const user = await model.find({email: req.params.email});
       if (!user) res.status(status.NOT_FOUND).json("user not found");
