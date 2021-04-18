@@ -9,7 +9,7 @@ class Server {
     const fs = require("fs");
     // external dependencies
     const express = require("express");
-    const bodyParser = require("body-parser");
+    // const bodyParser = require("body-parser");
     const helmet = require("helmet");
     const morgan = require("morgan");
     const rateLimit = require("express-rate-limit");
@@ -28,18 +28,20 @@ class Server {
     );
 
     // config bodyParser
-    this.app.use(
-      bodyParser.urlencoded({
-        extended: true
-      })
-    );
-    this.app.use(bodyParser.text());
-    this.app.use(
-      bodyParser.json({
-        type: "application/json",
-        limit: "20mb"
-      })
-    );
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({extended: true}));
+    // this.app.use(
+    //   bodyParser.urlencoded({
+    //     extended: true
+    //   })
+    // );
+    // this.app.use(bodyParser.text());
+    // this.app.use(
+    //   bodyParser.json({
+    //     type: "application/json",
+    //     limit: "20mb"
+    //   })
+    // );
 
     // documentacion
     const swaggerJsDoc = require("swagger-jsdoc");

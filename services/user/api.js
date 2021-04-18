@@ -2,7 +2,7 @@
 
 const status = require("http-status");
 const Model = require("./model");
-const {registerValidator, loginValidator} = require("./validator");
+const { registerValidator, loginValidator } = require("./validator");
 const checkToken = require("../../middlewares/checkToken");
 
 module.exports = async function(app, prefix) {
@@ -23,26 +23,13 @@ module.exports = async function(app, prefix) {
    *         description: API failed unexpectedly.
    */
   app.post(prefix + "/register", async (req, res) => {
-    const {error} = registerValidator(req.body);
+    const { error } = registerValidator(req.body);
     if (error) return res.status(status.BAD_REQUEST).json(error.details);
     try {
+      req.body.role_id = 2;
       const user = await model.register(req.body);
       console.log(user);
-      res.status(status.OK).json(user);
-    } catch (err) {
-      console.log(err);
-      res.status(status.INTERNAL_SERVER_ERROR).json(err.message);
-    }
-    return res;
-  });
-
-  app.post(prefix + "/login", async (req, res) => {
-    const {error} = loginValidator(req.body);
-    if (error) return res.status(status.BAD_REQUEST).json(error.details);
-    try {
-      const token = await model.login(req.body);
-      // console.log(user);
-      res.status(status.OK).json(token);
+      res.status(status.CREATED).json(user);
     } catch (err) {
       console.log(err);
       res.status(status.INTERNAL_SERVER_ERROR).json(err.message);
@@ -52,7 +39,7 @@ module.exports = async function(app, prefix) {
 
   app.get(prefix + "/by_id/:id", checkToken, async (req, res) => {
     try {
-      const user = await model.find({id: req.params.id});
+      const user = await model.find({ id: req.params.id });
       if (!user) res.status(status.NOT_FOUND).json("user not found");
       else res.status(status.OK).json(user);
     } catch (err) {
@@ -64,7 +51,7 @@ module.exports = async function(app, prefix) {
 
   app.get(prefix + "/by_email/:email", checkToken, async (req, res) => {
     try {
-      const user = await model.find({email: req.params.email});
+      const user = await model.find({ email: req.params.email });
       if (!user) res.status(status.NOT_FOUND).json("user not found");
       else res.status(status.OK).json(user);
     } catch (err) {

@@ -12,8 +12,7 @@ class Model extends DB {
 
   async find(params) {
     const conn_ = await this.conn();
-    console.log(params);
-    const {id, email} = params;
+    const { id, email } = params;
     let user;
     if (id) {
       user = await conn_
@@ -31,27 +30,15 @@ class Model extends DB {
 
   async register(user) {
     const conn_ = await this.conn();
-    const userFound = await this.find({email: user.email});
+    const userFound = await this.find({ email: user.email });
     if (userFound) throw new Error("User already exists");
     user.password = await this.encryptor.encryptPassword(user.password);
     return await conn_("customer").insert({
       email: user.email,
       password: user.password,
-      display_name: user.name
+      display_name: user.name,
+      role_id: user.role_id
     });
-  }
-
-  async login(user) {
-    // const conn_ = await this.conn();
-    const userFound = await this.find({email: user.email});
-    if (!userFound) throw new Error("Email not found");
-    const validPassword = await this.encryptor.checkPasswords(
-      user.password,
-      userFound.password
-    );
-    console.log(validPassword);
-    if (!validPassword) throw new Error("Wrong password");
-    return this.encryptor.generateToken(userFound.customer_id);
   }
 }
 

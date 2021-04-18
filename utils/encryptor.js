@@ -10,21 +10,29 @@ class Encryptor {
 
   async encryptPassword(password) {
     const salt = await bcrypt.genSalt(this.saltRounds);
-    console.log(salt);
-    console.log(password);
-    const encryptedPassword = await bcrypt.hash(password, salt);
-    console.log(encryptedPassword);
-    return encryptedPassword;
+    return await bcrypt.hash(password, salt);
   }
 
   async checkPasswords(inputPassword, encryptedPassword) {
-    const res = await bcrypt.compare(inputPassword, encryptedPassword);
-    console.log(res);
-    return res;
+    return await bcrypt.compare(inputPassword, encryptedPassword);
   }
 
-  generateToken(userId) {
-    return jwt.sign({userId}, process.env.TOKEN_SECRET);
+  generateAccessToken(id, role, expiresIn = 15 * 60) {
+    const accessToken = jwt.sign(
+      { id, role },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn }
+    );
+
+    return { accessToken, expiresIn };
+  }
+
+  generateRefreshToken(id, role) {
+    return jwt.sign({ id, role }, process.env.REFRESH_TOKEN_SECRET);
+  }
+
+  verifyRefreshToken(refreshToken) {
+    return jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
   }
 }
 
