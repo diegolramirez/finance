@@ -25,29 +25,6 @@ class DB {
       return connection;
     } else return this.connection;
   }
-  //
-  // async queryPG(query, parameters) {
-  //   // console.log("queryPG -", query);
-  //   try {
-  //     let rows = await this.connectionPG.raw(query, parameters);
-  //     rows = rows.rows.length > 0 ? rows.rows : [];
-  //     return rows;
-  //   } catch (error) {
-  //     console.log("queryPG -", error);
-  //     throw error;
-  //   }
-  // }
-  //
-  // async updatePG(query, parameters) {
-  //   // console.log(query);
-  //   try {
-  //     let rows = await this.connectionPG.raw(query, parameters);
-  //     return rows.rowCount;
-  //   } catch (error) {
-  //     console.log("updatePG -", error);
-  //     throw error;
-  //   }
-  // }
 }
 
 module.exports = DB;

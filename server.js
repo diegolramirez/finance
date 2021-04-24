@@ -21,7 +21,7 @@ class Server {
     this.app.use(
       rateLimit({
         windowMs: 1 * 60 * 1000, // 1 minutes window
-        max: 10, // start blocking after 5 requests
+        max: 15, // start blocking after 15 requests
         message:
           "Too many requests created from this IP, please try again later"
       })
@@ -29,7 +29,7 @@ class Server {
 
     // config bodyParser
     this.app.use(express.json());
-    this.app.use(express.urlencoded({extended: true}));
+    this.app.use(express.urlencoded({ extended: true }));
     // this.app.use(
     //   bodyParser.urlencoded({
     //     extended: true
